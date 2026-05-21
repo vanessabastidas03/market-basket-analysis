@@ -16,7 +16,27 @@ from src.apriori_model import run_apriori, generate_rules
 st.set_page_config(page_title="Apriori", page_icon="🔍", layout="wide")
 
 st.title("🔍 Reglas de Asociación - Apriori")
-st.markdown("Genera reglas de asociación usando el algoritmo **Apriori**.")
+st.markdown("""
+### 🎯 ¿Qué encontrarás en esta página?
+
+Aquí aplicamos el algoritmo **Apriori** para descubrir **reglas de asociación** del tipo:
+
+> *"Si un cliente compra A, también comprará B"*
+
+### 📊 Métricas que calculamos
+
+- **Support**: frecuencia de la combinación en el dataset.
+- **Confidence**: probabilidad de comprar B dado que ya se compró A.
+- **Lift**: fuerza de la asociación (>1 = asociación positiva).
+
+### ⚙️ Cómo usar
+
+1. Ajusta los parámetros en la barra lateral.
+2. Haz clic en **Ejecutar Apriori**.
+3. Explora las reglas en la tabla, el scatter plot y el grafo.
+
+💡 *Tip: Si bajas el `min_support`, encontrarás más reglas pero el algoritmo tardará más.*
+""")
 st.markdown("---")
 
 df = load_processed_data()
