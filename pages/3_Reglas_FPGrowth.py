@@ -14,7 +14,12 @@ from src.fpgrowth_model import run_fpgrowth, generate_rules_fpgrowth
 st.set_page_config(page_title="FP-Growth", page_icon="⚡", layout="wide")
 
 st.title("⚡ Reglas de Asociación - FP-Growth")
-st.markdown("Genera reglas de asociación usando el algoritmo **FP-Growth** (más eficiente que Apriori).")
+st.markdown("""
+Genera reglas de asociación usando el algoritmo **FP-Growth**, una alternativa más eficiente que Apriori.
+
+**FP-Growth** construye un árbol llamado *FP-tree* que permite encontrar itemsets frecuentes sin 
+generar candidatos explícitamente. Esto lo hace **mucho más rápido** en datasets grandes.
+""")
 st.markdown("---")
 
 df = load_processed_data()
@@ -37,6 +42,10 @@ if st.button("⚡ Ejecutar FP-Growth", type="primary"):
     rules = generate_rules_fpgrowth(itemsets, metric='confidence', min_threshold=min_confidence)
     rules = rules[rules['lift'] >= min_lift].reset_index(drop=True)
     
+    # 🔧 CONVERTIR FROZENSET A STRING para evitar error de serialización JSON
+    rules['antecedents_str'] = rules['antecedents'].apply(format_itemset)
+    rules['consequents_str'] = rules['consequents'].apply(format_itemset)
+    
     st.session_state['fp_rules'] = rules
     st.session_state['fp_itemsets'] = itemsets
     st.session_state['fp_time'] = elapsed
@@ -58,12 +67,17 @@ if 'fp_rules' in st.session_state:
     
     st.markdown("---")
     
-    # Tabla
+    # --- TABLA DE REGLAS ---
     st.subheader("📋 Reglas encontradas")
-    rules_display = rules.copy()
-    rules_display['antecedents'] = rules_display['antecedents'].apply(format_itemset)
-    rules_display['consequents'] = rules_display['consequents'].apply(format_itemset)
-    rules_display = rules_display[['antecedents', 'consequents', 'support', 'confidence', 'lift']]
+    st.markdown("""
+    Cada fila representa una **regla de asociación** del tipo *"Si el cliente compra A, también comprará B"*.
+    
+    - **Support**: qué tan frecuente es la regla en el dataset.
+    - **Confidence**: probabilidad de B cuando A está presente.
+    - **Lift**: cuánto más probable es B con A. *Lift > 1 = asociación positiva.*
+    """)
+    
+    rules_display = rules[['antecedents_str', 'consequents_str', 'support', 'confidence', 'lift']].copy()
     rules_display.columns = ['Antecedente', 'Consecuente', 'Support', 'Confidence', 'Lift']
     
     st.dataframe(
@@ -72,7 +86,7 @@ if 'fp_rules' in st.session_state:
             'Confidence': '{:.4f}',
             'Lift': '{:.2f}'
         }).background_gradient(subset=['Lift'], cmap='Oranges'),
-        width="stretch",
+        width='stretch',
         height=400
     )
     
@@ -81,35 +95,43 @@ if 'fp_rules' in st.session_state:
     
     st.markdown("---")
     
-    # Scatter
+    # --- SCATTER ---
     st.subheader("📊 Support vs Confidence (color = Lift)")
-
-    rules_plot = rules.copy()
-    rules_plot['antecedents_str'] = rules_plot['antecedents'].apply(lambda x: ", ".join(list(x)))
-    rules_plot['consequents_str'] = rules_plot['consequents'].apply(lambda x: ", ".join(list(x)))
-    rules_plot = rules_plot[['support', 'confidence', 'lift', 'antecedents_str', 'consequents_str']]
-
+    st.markdown("""
+    Cada punto es una regla. Los puntos en la **esquina superior derecha** son los más valiosos:
+    alta confianza, buen soporte y lift elevado.
+    """)
+    
+    # ✅ USAR LAS COLUMNAS STRING, NO LOS FROZENSETS
     fig = px.scatter(
-        rules_plot, x='support', y='confidence', color='lift', size='lift',
-        hover_data={'antecedents_str': True, 'consequents_str': True},
+        rules,
+        x='support',
+        y='confidence',
+        color='lift',
+        size='lift',
+        hover_data=['antecedents_str', 'consequents_str'],
         color_continuous_scale='Plasma',
         title="Distribución de reglas FP-Growth"
     )
-    st.plotly_chart(fig, width="stretch")
-
-    # Top 10
+    st.plotly_chart(fig, width='stretch')
+    
+    # --- TOP 10 ---
     st.subheader("🏆 Top 10 reglas por Lift")
-    top10 = rules_plot.head(10).copy()
-    top10['rule'] = top10.apply(
-        lambda r: f"{r['antecedents_str']} → {r['consequents_str']}",
-        axis=1
-    )
+    st.markdown("Las 10 reglas con mayor *lift*: las asociaciones más fuertes entre productos.")
+    
+    top10 = rules.head(10).copy()
+    top10['rule'] = top10['antecedents_str'] + ' → ' + top10['consequents_str']
+    
     fig_top = px.bar(
-        top10, x='lift', y='rule', orientation='h',
-        color='confidence', color_continuous_scale='Plasma'
+        top10,
+        x='lift',
+        y='rule',
+        orientation='h',
+        color='confidence',
+        color_continuous_scale='Plasma'
     )
     fig_top.update_layout(yaxis={'categoryorder': 'total ascending'}, height=500)
-    st.plotly_chart(fig_top, width="stretch")
+    st.plotly_chart(fig_top, width='stretch')
 
 else:
-    st.info("👈 Configura los parámetros y haz clic en **Ejecutar FP-Growth**.")
+    st.info("👈 Configura los parámetros en la barra lateral y haz clic en **Ejecutar FP-Growth**.")
