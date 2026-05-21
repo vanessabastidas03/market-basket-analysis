@@ -45,6 +45,7 @@ Thumbs.db
 
 # Datos grandes (opcional, depende del tamaño)
 # data/raw/*.csv
+data/processed/*.pkl
 
 # Logs
 *.log
