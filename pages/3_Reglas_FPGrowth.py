@@ -72,7 +72,7 @@ if 'fp_rules' in st.session_state:
             'Confidence': '{:.4f}',
             'Lift': '{:.2f}'
         }).background_gradient(subset=['Lift'], cmap='Oranges'),
-        use_container_width=True,
+        width="stretch",
         height=400
     )
     
@@ -83,19 +83,25 @@ if 'fp_rules' in st.session_state:
     
     # Scatter
     st.subheader("📊 Support vs Confidence (color = Lift)")
+
+    rules_plot = rules.copy()
+    rules_plot['antecedents_str'] = rules_plot['antecedents'].apply(lambda x: ", ".join(list(x)))
+    rules_plot['consequents_str'] = rules_plot['consequents'].apply(lambda x: ", ".join(list(x)))
+    rules_plot = rules_plot[['support', 'confidence', 'lift', 'antecedents_str', 'consequents_str']]
+
     fig = px.scatter(
-        rules, x='support', y='confidence', color='lift', size='lift',
-        hover_data={'antecedents': True, 'consequents': True},
+        rules_plot, x='support', y='confidence', color='lift', size='lift',
+        hover_data={'antecedents_str': True, 'consequents_str': True},
         color_continuous_scale='Plasma',
         title="Distribución de reglas FP-Growth"
     )
-    st.plotly_chart(fig, use_container_width=True)
-    
+    st.plotly_chart(fig, width="stretch")
+
     # Top 10
     st.subheader("🏆 Top 10 reglas por Lift")
-    top10 = rules.head(10).copy()
+    top10 = rules_plot.head(10).copy()
     top10['rule'] = top10.apply(
-        lambda r: f"{format_itemset(r['antecedents'])} → {format_itemset(r['consequents'])}",
+        lambda r: f"{r['antecedents_str']} → {r['consequents_str']}",
         axis=1
     )
     fig_top = px.bar(
@@ -103,7 +109,7 @@ if 'fp_rules' in st.session_state:
         color='confidence', color_continuous_scale='Plasma'
     )
     fig_top.update_layout(yaxis={'categoryorder': 'total ascending'}, height=500)
-    st.plotly_chart(fig_top, use_container_width=True)
+    st.plotly_chart(fig_top, width="stretch")
 
 else:
     st.info("👈 Configura los parámetros y haz clic en **Ejecutar FP-Growth**.")

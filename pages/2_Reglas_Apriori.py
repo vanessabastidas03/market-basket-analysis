@@ -86,7 +86,7 @@ if 'apriori_rules' in st.session_state:
             'Confidence': '{:.4f}',
             'Lift': '{:.2f}'
         }).background_gradient(subset=['Lift'], cmap='Greens'),
-        use_container_width=True,
+        width="stretch",
         height=400
     )
     
@@ -98,30 +98,35 @@ if 'apriori_rules' in st.session_state:
     
     # --- VISUALIZACIÓN: SCATTER ---
     st.subheader("📊 Visualización: Support vs Confidence (color = Lift)")
-    
+
+    rules_plot = rules.copy()
+    rules_plot['antecedents_str'] = rules_plot['antecedents'].apply(lambda x: ", ".join(list(x)))
+    rules_plot['consequents_str'] = rules_plot['consequents'].apply(lambda x: ", ".join(list(x)))
+    rules_plot = rules_plot[['support', 'confidence', 'lift', 'antecedents_str', 'consequents_str']]
+
     fig_scatter = px.scatter(
-        rules,
+        rules_plot,
         x='support',
         y='confidence',
         color='lift',
         size='lift',
-        hover_data={'antecedents': True, 'consequents': True},
+        hover_data={'antecedents_str': True, 'consequents_str': True},
         color_continuous_scale='Viridis',
         title="Distribución de reglas de asociación"
     )
     fig_scatter.update_traces(
         hovertemplate='<b>Support:</b> %{x:.4f}<br><b>Confidence:</b> %{y:.4f}<br><b>Lift:</b> %{marker.color:.2f}<extra></extra>'
     )
-    st.plotly_chart(fig_scatter, use_container_width=True)
-    
+    st.plotly_chart(fig_scatter, width="stretch")
+
     # --- TOP 10 REGLAS ---
     st.subheader("🏆 Top 10 reglas por Lift")
-    top10 = rules.head(10).copy()
+    top10 = rules_plot.head(10).copy()
     top10['rule'] = top10.apply(
-        lambda r: f"{format_itemset(r['antecedents'])} → {format_itemset(r['consequents'])}",
+        lambda r: f"{r['antecedents_str']} → {r['consequents_str']}",
         axis=1
     )
-    
+
     fig_top = px.bar(
         top10,
         x='lift',
@@ -132,7 +137,7 @@ if 'apriori_rules' in st.session_state:
         title="Top 10 reglas por Lift"
     )
     fig_top.update_layout(yaxis={'categoryorder': 'total ascending'}, height=500)
-    st.plotly_chart(fig_top, use_container_width=True)
+    st.plotly_chart(fig_top, width="stretch")
     
     # --- GRAFO DE RELACIONES ---
     st.subheader("🕸️ Grafo de reglas (Top 20)")
