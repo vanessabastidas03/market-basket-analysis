@@ -100,7 +100,8 @@ Usa el menú lateral para navegar entre las páginas:
 """)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 👤 Autor")
+st.sidebar.markdown("### 👩‍💻 Autora")
+st.sidebar.markdown("**Vanessa Bastidas**")
 st.sidebar.markdown("Proyecto Final - Minería de Datos")
 st.sidebar.markdown("### 🔗 Enlaces")
 st.sidebar.markdown("[📦 Dataset](https://www.kaggle.com/datasets/heeraldedhia/groceries-dataset)")
