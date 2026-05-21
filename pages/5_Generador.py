@@ -131,5 +131,5 @@ display_df = matching_rules[['antecedente_aplicado', 'recomendados', 'support', 
 display_df.columns = ['Tu canasta contiene', 'Producto sugerido', 'Support', 'Confidence', 'Lift']
 st.dataframe(
     display_df.style.format({'Support': '{:.4f}', 'Confidence': '{:.4f}', 'Lift': '{:.2f}'}),
-    use_container_width=True
+    width="stretch"
 )

@@ -64,7 +64,7 @@ if 'comparison' in st.session_state:
         'apriori_time_s': '{:.4f}',
         'fpgrowth_time_s': '{:.4f}',
         'speedup': '{:.2f}'
-    }).background_gradient(subset=['speedup'], cmap='RdYlGn'), use_container_width=True)
+    }).background_gradient(subset=['speedup'], cmap='RdYlGn'), width="stretch")
     
     csv = comp.to_csv(index=False).encode('utf-8')
     st.download_button("📥 Descargar comparación (CSV)", csv, "comparison.csv", "text/csv")
@@ -94,7 +94,7 @@ if 'comparison' in st.session_state:
         hovermode='x unified',
         height=500
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     
     # --- BARRAS: ITEMSETS Y REGLAS ---
     col1, col2 = st.columns(2)
@@ -115,7 +115,7 @@ if 'comparison' in st.session_state:
             barmode='group',
             color_discrete_map={'Apriori': '#3498db', 'FP-Growth': '#e67e22'}
         )
-        st.plotly_chart(fig_it, use_container_width=True)
+        st.plotly_chart(fig_it, width="stretch")
     
     with col2:
         st.subheader("📜 Reglas generadas")
@@ -133,7 +133,7 @@ if 'comparison' in st.session_state:
             barmode='group',
             color_discrete_map={'Apriori': '#3498db', 'FP-Growth': '#e67e22'}
         )
-        st.plotly_chart(fig_r, use_container_width=True)
+        st.plotly_chart(fig_r, width="stretch")
     
     st.markdown("---")
     

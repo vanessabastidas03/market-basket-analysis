@@ -37,7 +37,7 @@ fig = px.bar(
     color_continuous_scale='Viridis'
 )
 fig.update_layout(yaxis={'categoryorder': 'total ascending'}, height=600)
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # --- DISTRIBUCIÓN DEL TAMAÑO DE TRANSACCIONES ---
 st.subheader("📦 Tamaño de las transacciones")
@@ -56,7 +56,7 @@ with col1:
         labels={'tamaño': 'Ítems por transacción', 'count': 'Frecuencia'},
         color_discrete_sequence=['#1f77b4']
     )
-    st.plotly_chart(fig_hist, use_container_width=True)
+    st.plotly_chart(fig_hist, width="stretch")
 
 with col2:
     st.markdown("### 📊 Estadísticas")
@@ -84,7 +84,7 @@ fig_cum.update_layout(
     height=400
 )
 fig_cum.add_hline(y=80, line_dash="dash", line_color="red", annotation_text="80%")
-st.plotly_chart(fig_cum, use_container_width=True)
+st.plotly_chart(fig_cum, width="stretch")
 
 n_products_80 = (cumulative <= 80).sum() + 1
 st.info(f"💡 **Insight**: Solo **{n_products_80} productos** (de {len(cumulative)}) "
@@ -106,7 +106,7 @@ fig_heat = px.imshow(
     title=f"Correlación entre los {n_corr} productos más vendidos"
 )
 fig_heat.update_layout(height=700)
-st.plotly_chart(fig_heat, use_container_width=True)
+st.plotly_chart(fig_heat, width="stretch")
 
 st.markdown("---")
 st.caption("💾 Datos procesados desde `Groceries_dataset.csv` siguiendo metodología CRISP-DM.")
