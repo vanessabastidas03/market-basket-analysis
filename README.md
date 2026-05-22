@@ -4,8 +4,6 @@ Aplicación web interactiva que aplica técnicas de minería de datos para ident
 
 ## 🌐 Aplicación en vivo
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vanessa-market-basket.streamlit.app/)
-
 🔗 **URL:** [https://vanessa-market-basket.streamlit.app/](https://vanessa-market-basket.streamlit.app)
 
 ## 📋 Descripción
