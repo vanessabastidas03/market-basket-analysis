@@ -2,6 +2,12 @@
 
 Aplicación web interactiva que aplica técnicas de minería de datos para identificar patrones de compra mediante reglas de asociación, utilizando los algoritmos **Apriori** y **FP-Growth**.
 
+## 🌐 Aplicación en vivo
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://vanessa-market-basket.streamlit.app/)
+
+🔗 **URL:** [https://vanessa-market-basket.streamlit.app/](https://vanessa-market-basket.streamlit.app)
+
 ## 📋 Descripción
 
 Este proyecto implementa un análisis de canasta de mercado sobre el dataset **Groceries Dataset** de Kaggle, siguiendo la metodología **CRISP-DM**. Permite identificar productos que frecuentemente se compran juntos, generando reglas de asociación útiles para estrategias comerciales.
