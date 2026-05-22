@@ -7,22 +7,41 @@ from pathlib import Path
 import streamlit as st
 
 
+def _regenerate():
+    from src.data_preprocessing import run_preprocessing
+    run_preprocessing()
+
+
 @st.cache_data
 def load_processed_data(filepath: str = 'data/processed/transactions_encoded.pkl') -> pd.DataFrame:
     """
     Carga el DataFrame one-hot encoded procesado.
-    Usa cache de Streamlit para no recargar en cada interacción.
+    Si el archivo no existe o no puede deserializarse, regenera desde el CSV.
     """
-    return pd.read_pickle(filepath)
+    try:
+        if not Path(filepath).exists():
+            raise FileNotFoundError(filepath)
+        return pd.read_pickle(filepath)
+    except Exception:
+        _regenerate()
+        return pd.read_pickle(filepath)
 
 
 @st.cache_data
 def load_transactions_list(filepath: str = 'data/processed/transactions_list.pkl') -> list:
     """
     Carga la lista de transacciones.
+    Si el archivo no existe o no puede deserializarse, regenera desde el CSV.
     """
-    with open(filepath, 'rb') as f:
-        return pickle.load(f)
+    try:
+        if not Path(filepath).exists():
+            raise FileNotFoundError(filepath)
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)
+    except Exception:
+        _regenerate()
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)
 
 
 def format_itemset(itemset) -> str:
